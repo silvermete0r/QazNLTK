@@ -1,0 +1,1 @@
+# qaznltk/__init__.py
