@@ -11,13 +11,7 @@
 
 ## What is it?
 
-**pandas** is a Python package that provides fast, flexible, and expressive data
-structures designed to make working with "relational" or "labeled" data both
-easy and intuitive. It aims to be the fundamental high-level building block for
-doing practical, **real world** data analysis in Python. Additionally, it has
-the broader goal of becoming **the most powerful and flexible open source data
-analysis / manipulation tool available in any language**. It is already well on
-its way towards this goal.
+**QazNLTK** provides developers with a fast and convenient tool for processing text in the Kazakh language. Tailored for the unique linguistic characteristics of Kazakh, this library offers a comprehensive set of tools for natural language processing, like: tokenization, sentence segmentation, evaluation similarity score and tranliteration of kazakh language cyrillic-latin.
 
 ## Table of Contents
 
