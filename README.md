@@ -33,6 +33,9 @@ qn = qnltk.QazNLTK()
 text = input("Enter text: ")
 tokens = qn.tokenize(text)
 print(tokens)
+
+# Input: Біздің өміріміз үлкен өзен іспетті. Сіздің қайығыңыздың қиындықтардан жеңіл өтіп, махаббат иірімінде басқаруын жоғалтпай, бақыт сарқырамасына жетуін тілеймін!
+# Output: [('өміріміз', 1), ('үлкен', 1), ('өзен', 1), ('іспетті', 1), ('сіздің', 1), ('қайығыңыздың', 1), ('қиындықтардан', 1), ('жеңіл', 1), ('өтіп', 1), ('махаббат', 1), ('иірімінде', 1), ('басқаруын', 1), ('жоғалтпай', 1), ('бақыт', 1), ('сарқырамасына', 1), ('жетуін', 1), ('тілеймін', 1)]
 ```
 
 2) Kazakh language Text Segmentation into sentences:
@@ -43,6 +46,9 @@ qn = qnltk.QazNLTK()
 text = input("Enter text: ")
 sent_tokens = qn.sent_tokenize(text)
 print(sent_tokens)
+
+# Input: Біздің өміріміз үлкен өзен іспетті. Сіздің қайығыңыздың қиындықтардан жеңіл өтіп, махаббат иірімінде басқаруын жоғалтпай, бақыт сарқырамасына жетуін тілеймін!
+# Output: ['Біздің өміріміз үлкен өзен іспетті.', 'Сіздің қайығыңыздың қиындықтардан жеңіл өтіп, махаббат иірімінде басқаруын жоғалтпай, бақыт сарқырамасына жетуін тілеймін!']
 ```
 
 3) Evaluate Difference score between 2 text:
@@ -54,6 +60,9 @@ textA = input("Enter text A: ")
 textB = input("Enter text B: ")
 similarity_score = qn.calc_similarity(textA, textB)
 print(similarity_score)
+
+# Input: textA = "Еңбегіне қарай — құрмет, Жасына қарай — ізет.", textB = "Еңбегіне қарай табысы, Ерлігіне қарай дабысы."
+# Output: 0.2222222222222222
 ```
 
 4) Convert Kazakh language Text from Cyrillic to Latin using ISO-9 Standard:
@@ -64,6 +73,9 @@ qn = qnltk.QazNLTK()
 text = input("Enter text: ")
 latin_text = qn.convert2latin(text)
 print(latin_text)
+
+# Input: Бүгін қандай керемет күн! 
+# Output: Bùgìn k̦andaj keremet kùn!
 ```
 
 5) Convert Kazakh language Text from Latin to Cyrillic using ISO-9 Standard:
@@ -74,6 +86,34 @@ qn = qnltk.QazNLTK()
 text = input("Enter text: ")
 cyrillic_text = qn.convert2cyrillic(text)
 print(cyrillic_text)
+
+# Input: Bùgìn k̦andaj keremet kùn!
+# Output: Бүгін қандай керемет күн!
+```
+
+6) Sentiment Analysis of Kazakh language text [`negative: -1`, `neutral: 0`, `positive: 1`]:
+``` Python
+from qaznltk import qaznltk as qnltk
+qn = qnltk.QazNLTK()
+
+text = input("Enter text: ")
+sentimize_score = qnltk.sentimize(text)
+print(sentimize_score)
+
+# Input: Бұл мақала өте нашар жазылған.
+# Output: -1 (negative)
+```
+
+7) Converting any number `N` into kazakh language number words [`N <= 10^31`]:
+``` Python
+from qaznltk import qaznltk as qnltk
+qn = qnltk.QazNLTK()
+
+n = int(input())
+print(qnltk.num2word(n))
+
+# Input: N = 9827
+# Output: тоғыз мың сегіз жүз жиырма жеті
 ```
 
 * **Test Samples:** https://vk.com/club121755042
@@ -112,5 +152,3 @@ All contributions, bug reports, bug fixes, documentation improvements, enhanceme
 <hr>
 
 [Go to Top](#table-of-contents)
-
-

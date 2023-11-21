@@ -266,5 +266,5 @@ if __name__ == "__main__":
     # sentimize_score = qnltk.sentimize(text)
     # print(sentimize_score)
 
-    n = int(input())
-    print(qnltk.num2word(n))
+    # n = int(input())
+    # print(qnltk.num2word(n))
