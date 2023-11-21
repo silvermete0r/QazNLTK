@@ -59,10 +59,16 @@ class QazNLTK:
     }
 
     stop_words = set()
+    positive_words = set()
+    negative_words = set()
 
-    def __init__(self, stop_words_file="special_words/stop_words.txt") -> None:
+    def __init__(self, stop_words_file="special_words/stop_words.txt", positive_words="special_words/positive_words.txt", negative_words="special_words/negative_words.txt") -> None:
         if not QazNLTK.stop_words:
             QazNLTK.stop_words = set(QazNLTK.load_words(stop_words_file))
+        if not QazNLTK.positive_words:
+            QazNLTK.positive_words = set(QazNLTK.load_words(positive_words))
+        if not QazNLTK.negative_words:
+            QazNLTK.negative_words = set(QazNLTK.load_words(negative_words))
 
     @staticmethod
     def load_words(words_file: str) -> List[str]:
@@ -131,9 +137,134 @@ class QazNLTK:
         similarity_score = intersection / union if union != 0 else 0.0
 
         return similarity_score
+    
+    @classmethod
+    def sentimize(cls, tokens) -> int:
+        # Sentiment analysis by tokens
+        if type(tokens) == str:
+            tokens = cls.tokenize(tokens)
+
+        positive_score = 0
+        negative_score = 0
+
+        for token, freq in tokens:
+            if token in cls.positive_words:
+                positive_score += freq
+            elif token in cls.negative_words:
+                negative_score += freq
+        
+        if positive_score > negative_score:
+            return 1
+        elif positive_score < negative_score:
+            return -1
+        else:
+            return 0
+    
+    @staticmethod
+    def num2word(n):
+        # Convert number to word
+        w = {
+            "1": "бір",
+            "2": "екі",
+            "3": "үш",
+            "4": "төрт",
+            "5": "бес",
+            "6": "алты",
+            "7": "жеті",
+            "8": "сегіз",
+            "9": "тоғыз",
+            "10": 'он',
+            "20": "жиырма",
+            "30": "отыз",
+            "40": "қырық",
+            "50": "елу",
+            "60": "алпыс",
+            "70": "жетпіс",
+            "80": "сексен",
+            "90": "тоқсан"
+        }
+        mp = {
+            1: "он",
+            2: "жүз",
+            3: "мың",
+            6: "миллион",
+            9: "миллиард",
+            12: "триллион",
+            15: "квадриллион",
+            18: "квинтиллион",
+            21: "секстиллион",
+            24: "септиллион",
+            27: "октиллион",
+            30: "нониллион"
+        }
+        s = str(n)
+        v = []
+        c = []
+        cur = ''
+
+        for i in range(len(s) - 1, -1, -1):
+            if i == len(s) - 1:
+                if s[i] > '0':
+                    v.append(w[s[i]])
+                continue
+            x = len(s) - i - 1
+            if x in mp:
+                if x == 1:
+                    if s[i] > '0':
+                        cur = w[s[i] + '0']
+                else:
+                    cur = mp[x]
+            else:
+                if x % 3 == 1:
+                    if s[i] > '0':
+                        cur = w[s[i] + '0']
+                    if mp[x - x % 3] not in c:
+                        cur += ' '
+                        cur += mp[x - x % 3]
+                else:
+                    cur = mp[x % 3]
+                    if mp[x - x % 3] not in c:
+                        cur += ' '
+                        cur += mp[x - x % 3]
+                        c.append(mp[x - x % 3])
+            if s[i] > '0':
+                c.append(cur)
+                v.append(cur)
+                if x % 3 == 2 and s[i] < '2':
+                    continue
+                if x % 3 != 1:
+                    v.append(w[s[i]])
+
+        if n < 0:
+            v.append('минус')
+
+        v.reverse()
+        return ' '.join(v)
 
 if __name__ == "__main__":
     qnltk = QazNLTK()
-    text = input('Enter text: ')
-    tokenized_text = qnltk.tokenize(text)
-    print(tokenized_text)
+
+    # text = input('Enter text: ')
+    
+    # tokens = qnltk.tokenize(text)
+    # print(tokens)
+
+    # sent_tokens = qnltk.sent_tokenize(text)
+    # print(sent_tokens)
+
+    # textA = input("Enter text A: ")
+    # textB = input("Enter text B: ")
+    # similarity_score = qnltk.calc_similarity(textA, textB)
+    # print(similarity_score)
+
+    # latin_text = qnltk.convert2latin(text)
+    # print(latin_text)
+
+    # cyrillic_text = qnltk.convert2cyrillic(text)
+    # print(cyrillic_text)
+
+    # sentimize_score = qnltk.sentimize(text)
+    # print(sentimize_score)
+
+    n = int(input())
+    print(qnltk.num2word(n))
