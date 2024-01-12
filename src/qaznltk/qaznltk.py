@@ -62,13 +62,10 @@ class QazNLTK:
     positive_words = set()
     negative_words = set()
 
-    def __init__(self, stop_words_file="special_words/stop_words.txt", positive_words="special_words/positive_words.txt", negative_words="special_words/negative_words.txt") -> None:
-        if not QazNLTK.stop_words:
-            QazNLTK.stop_words = set(QazNLTK.load_words(stop_words_file))
-        if not QazNLTK.positive_words:
-            QazNLTK.positive_words = set(QazNLTK.load_words(positive_words))
-        if not QazNLTK.negative_words:
-            QazNLTK.negative_words = set(QazNLTK.load_words(negative_words))
+    def __init__(self, stop_words_file="special_words/stop_words.txt", positive_words_file="special_words/positive_words.txt", negative_words_file="special_words/negative_words.txt") -> None:
+        QazNLTK.stop_words = set(self.load_words(stop_words_file))
+        QazNLTK.positive_words = set(self.load_words(positive_words_file))
+        QazNLTK.negative_words = set(self.load_words(negative_words_file))
 
     @staticmethod
     def load_words(words_file: str) -> List[str]:
@@ -243,7 +240,7 @@ class QazNLTK:
 
 if __name__ == "__main__":
     qnltk = QazNLTK()
-
+    
     # text = input('Enter text: ')
     
     # tokens = qnltk.tokenize(text)

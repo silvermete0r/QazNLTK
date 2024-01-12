@@ -112,8 +112,8 @@ qn = qnltk.QazNLTK()
 n = int(input())
 print(qnltk.num2word(n))
 
-# Input: N = 9827
-# Output: тоғыз мың сегіз жүз жиырма жеті
+# Input: N = 1465
+# Output: бір мың төрт жүз алпыс бес
 ```
 
 * **Test Samples:** https://vk.com/club121755042
