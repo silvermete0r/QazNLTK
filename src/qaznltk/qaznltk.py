@@ -1,6 +1,7 @@
 import re
 from typing import List
 from collections import Counter
+from functools import lru_cache
 
 class QazNLTK:
     '''
@@ -62,10 +63,43 @@ class QazNLTK:
     positive_words = set()
     negative_words = set()
 
+    @lru_cache(maxsize=None)
     def __init__(self, stop_words_file="special_words/stop_words.txt", positive_words_file="special_words/positive_words.txt", negative_words_file="special_words/negative_words.txt") -> None:
         QazNLTK.stop_words = set(self.load_words(stop_words_file))
         QazNLTK.positive_words = set(self.load_words(positive_words_file))
         QazNLTK.negative_words = set(self.load_words(negative_words_file))
+    
+    @staticmethod
+    def __preprocess_text(text: str) -> str:
+        return re.sub(r'\W+', '', text.lower())
+    
+    @staticmethod
+    def __jaccard_similarity(str1: str, str2: str) -> float:
+        # Calculate Jaccard similarity: https://en.wikipedia.org/wiki/Jaccard_index
+        set1 = set(str1)
+        set2 = set(str2)
+        intersection = len(set1.intersection(set2))
+        union = len(set1.union(set2))
+        return intersection / union if union != 0 else 0
+    
+    @staticmethod
+    @lru_cache(maxsize=None)
+    def __levenshtein_distance(s1: str, s2: str) -> int:
+        # Calculate Levenshtein distance: https://en.wikipedia.org/wiki/Levenshtein_distance
+        if len(s1) < len(s2):
+            return QazNLTK.__levenshtein_distance(s2, s1)
+        if len(s2) == 0:
+            return len(s1)
+        previous_row = range(len(s2) + 1)
+        for i, c1 in enumerate(s1):
+            current_row = [i + 1]
+            for j, c2 in enumerate(s2):
+                insertions = previous_row[j + 1] + 1
+                deletions = current_row[j] + 1
+                substitutions = previous_row[j] + (c1 != c2)
+                current_row.append(min(insertions, deletions, substitutions))
+            previous_row = current_row
+        return previous_row[-1]
 
     @staticmethod
     def load_words(words_file: str) -> List[str]:
@@ -80,7 +114,7 @@ class QazNLTK:
             return []
     
     @classmethod
-    def convert2cyrillic(cls, text: str) -> str:
+    def convert2cyrillic_iso9(cls, text: str) -> str:
         # Convert kazakh latin to cyrillic
         cyrillic_text = ''
         reversed_mapping = {v: k for k, v in cls.cyrillic_to_iso_9_mapping.items()}
@@ -91,7 +125,7 @@ class QazNLTK:
         return cyrillic_text
 
     @classmethod
-    def convert2latin(cls, text: str) -> str:
+    def convert2latin_iso9(cls, text: str) -> str:
         # Convert kazakh cyrillic to latin
         latin_text = ''
 
@@ -121,22 +155,70 @@ class QazNLTK:
         sentences = [sentence.strip() for sentence in sentences]
 
         return sentences
-    
+
     @staticmethod
     def calc_similarity(textA: str, textB: str) -> float:
-        # Jaccard Similarity Calculation
-        setA = set(textA.split())
-        setB = set(textB.split())
+        # Calculate similarity between two texts
+        str1 = QazNLTK.__preprocess_text(textA)
+        str2 = QazNLTK.__preprocess_text(textB)
+        
+        if not str1 or not str2:
+            return 0
+        
+        jaccard_similarity = QazNLTK.__jaccard_similarity(str1, str2) 
+        levenshtein_distance = QazNLTK.__levenshtein_distance(str1, str2)
 
-        intersection = len(setA.intersection(setB))
-        union = len(setA) + len(setB) - intersection
-
-        similarity_score = intersection / union if union != 0 else 0.0
-
+        similarity_score = (jaccard_similarity + 1 / (levenshtein_distance + 1)) / 2
+        
         return similarity_score
+
+    @staticmethod
+    def get_info_from_iin(iin: str) -> dict:
+        # Get information from IIN
+        if len(iin) != 12 or not iin.isdigit():
+            return {"status": "error", "message": "Incorrect IIN. The length of the IIN must be 12 digits."}
+
+        year = int(iin[:2])
+        month = int(iin[2:4])
+        day = int(iin[4:6])
+        sequence_number = int(iin[7:11])
+        control_discharge = int(iin[11:12])
+
+        gender_code = int(iin[6])
+
+        if gender_code in [1, 2]:
+            year += 1800
+        elif gender_code in [3, 4]:
+            year += 1900
+        elif gender_code in [5, 6]:
+            year += 2000
+        else:
+            return {"status": "error", "message": "Incorrect IIN. The first digit of the IIN must be in the range [1, 6]."}
+
+        if gender_code % 2 == 1:
+            gender = "male"
+        else:
+            gender = "female"
+
+        try:
+            from datetime import datetime
+            birth_date = datetime(year, month, day)
+        except ValueError:
+            return {"status": "error", "message": "Incorrect IIN. The date of birth is incorrect."}
+
+        info = {
+            "status": "success",
+            "date_of_birth": birth_date.strftime("%d.%m.%Y"),
+            "century_of_birth": f"{year // 100 + 1}",
+            "gender": gender,
+            "sequence_number": sequence_number,
+            "control_discharge": control_discharge
+        }
+
+        return info
     
     @classmethod
-    def sentimize(cls, tokens) -> int:
+    def sentimize(cls, tokens) -> float:
         # Sentiment analysis by tokens
         if type(tokens) == str:
             tokens = cls.tokenize(tokens)
@@ -151,11 +233,11 @@ class QazNLTK:
                 negative_score += freq
         
         if positive_score > negative_score:
-            return 1
+            return 1.0
         elif positive_score < negative_score:
-            return -1
+            return -1.0
         else:
-            return 0
+            return 0.0
     
     @staticmethod
     def num2word(n):
@@ -181,6 +263,7 @@ class QazNLTK:
             "90": "тоқсан"
         }
         mp = {
+            0: "нөл",
             1: "он",
             2: "жүз",
             3: "мың",
@@ -265,3 +348,6 @@ if __name__ == "__main__":
 
     # n = int(input())
     # print(qnltk.num2word(n))
+
+    iin = input("Enter IIN: ")
+    print(qnltk.get_info_from_iin(iin))

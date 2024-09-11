@@ -62,7 +62,7 @@ similarity_score = qn.calc_similarity(textA, textB)
 print(similarity_score)
 
 # Input: textA = "Еңбегіне қарай — құрмет, Жасына қарай — ізет.", textB = "Еңбегіне қарай табысы, Ерлігіне қарай дабысы."
-# Output: 0.2222222222222222
+# Output: 0.368421052631579
 ```
 
 4) Convert Kazakh language Text from Cyrillic to Latin using ISO-9 Standard:
@@ -101,7 +101,7 @@ sentimize_score = qnltk.sentimize(text)
 print(sentimize_score)
 
 # Input: Бұл мақала өте нашар жазылған.
-# Output: -1 (negative)
+# Output: -1.0 (negative)
 ```
 
 7) Converting any number `N` into kazakh language number words [`N <= 10^31`]:
@@ -114,6 +114,17 @@ print(qnltk.num2word(n))
 
 # Input: N = 1465
 # Output: бір мың төрт жүз алпыс бес
+```
+
+``` Python
+from qaznltk import qaznltk as qnltk
+qn = qnltk.QazNLTK()
+
+iin = input("Enter IIN: ")
+print(qnltk.get_info_from_iin(iin))
+
+# Input: 990408482390
+# Output: {'status': 'success', 'date_of_birth': '08.04.1999', 'century_of_birth': '20', 'gender': 'female', 'sequence_number': 8239, 'control_discharge': 0}
 ```
 
 * **Test Samples:** https://vk.com/club121755042
@@ -129,10 +140,6 @@ pip install qaznltk
 ```
 ![image](https://github.com/silvermete0r/QazNLTK/assets/108217670/b1e8eaa1-f25f-4019-9d75-dee8d25d6a28)
 
-
-The list of changes to pandas between each release can be found
-[here](https://pandas.pydata.org/pandas-docs/stable/whatsnew/index.html). For full
-details, see the commit logs at https://github.com/pandas-dev/pandas.
 
 ## Dependencies
 - Package was developed on built-in python functions; 
