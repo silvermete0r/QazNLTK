@@ -1,7 +1,9 @@
 import re
 from typing import List
 from collections import Counter
+import urllib3
 from functools import lru_cache
+from vectorizer import QazNLTKVectorizer, KNN
 
 class QazNLTK:
     '''
@@ -59,12 +61,13 @@ class QazNLTK:
         'Я': 'Â', 'я': 'â'
     }
 
+    base = 'https://raw.githubusercontent.com/silvermete0r/QazNLTK/master/special_words'
     stop_words = set()
     positive_words = set()
     negative_words = set()
 
     @lru_cache(maxsize=None)
-    def __init__(self, stop_words_file="special_words/stop_words.txt", positive_words_file="special_words/positive_words.txt", negative_words_file="special_words/negative_words.txt") -> None:
+    def __init__(self, stop_words_file=f"{base}/stop_words.txt", positive_words_file=f"{base}/positive_words.txt", negative_words_file=f"{base}/negative_words.txt") -> None:
         QazNLTK.stop_words = set(self.load_words(stop_words_file))
         QazNLTK.positive_words = set(self.load_words(positive_words_file))
         QazNLTK.negative_words = set(self.load_words(negative_words_file))
@@ -102,12 +105,12 @@ class QazNLTK:
         return previous_row[-1]
 
     @staticmethod
-    def load_words(words_file: str) -> List[str]:
+    def load_words(words_link: str) -> List[str]:
         try:
-            with open(words_file, "r", encoding='utf-8') as f:
-                return [line.strip() for line in f.readlines()]
+            data = urllib3.PoolManager().request('GET', words_link).data.decode('utf-8')
+            return data.split('\n')
         except FileNotFoundError:
-            print(f"File {words_file} not found")
+            print(f"File {words_link} not found")
             return []
         except Exception as e:
             print(f"Error: {e}")
@@ -115,24 +118,11 @@ class QazNLTK:
     
     @classmethod
     def convert2cyrillic_iso9(cls, text: str) -> str:
-        # Convert kazakh latin to cyrillic
-        cyrillic_text = ''
-        reversed_mapping = {v: k for k, v in cls.cyrillic_to_iso_9_mapping.items()}
-        
-        for char in text:
-            cyrillic_text += reversed_mapping.get(char, char)
-
-        return cyrillic_text
+        return ''.join({v: k for k, v in cls.cyrillic_to_iso_9_mapping.items()}.get(char, char) for char in text)
 
     @classmethod
     def convert2latin_iso9(cls, text: str) -> str:
-        # Convert kazakh cyrillic to latin
-        latin_text = ''
-
-        for char in text:
-            latin_text += cls.cyrillic_to_iso_9_mapping.get(char, char)
-
-        return latin_text
+        return ''.join(cls.cyrillic_to_iso_9_mapping.get(char, char) for char in text)
 
     @classmethod
     def tokenize(cls, text: str) -> List[tuple]:
@@ -147,30 +137,26 @@ class QazNLTK:
         return sorted_freqs
     
     @classmethod
-    def sent_tokenize(cls, text: str) -> List[str]:
-        # Tokenize Kazakh text into sentences
-        sentence_pattern = re.compile(r'(?<!\w\.\w.)(?<![A-ZА-ЯІЇҮӘҒЕЁНОҢУЎЫ])(?<=\.|\?|\!)\s')
-        
-        sentences = sentence_pattern.split(text)
-        sentences = [sentence.strip() for sentence in sentences]
+    def sentimize(cls, tokens) -> float:
+        # Sentiment analysis by tokens
+        if isinstance(tokens, str):
+            tokens = cls.tokenize(tokens)
 
-        return sentences
+        positive_score = sum(freq for token, freq in tokens if token in cls.positive_words)
+        negative_score = sum(freq for token, freq in tokens if token in cls.negative_words)
+        
+        return 1.0 if positive_score > negative_score else -1.0 if positive_score < negative_score else 0.0
 
     @staticmethod
     def calc_similarity(textA: str, textB: str) -> float:
         # Calculate similarity between two texts
         str1 = QazNLTK.__preprocess_text(textA)
         str2 = QazNLTK.__preprocess_text(textB)
-        
         if not str1 or not str2:
             return 0
-        
         jaccard_similarity = QazNLTK.__jaccard_similarity(str1, str2) 
         levenshtein_distance = QazNLTK.__levenshtein_distance(str1, str2)
-
-        similarity_score = (jaccard_similarity + 1 / (levenshtein_distance + 1)) / 2
-        
-        return similarity_score
+        return (jaccard_similarity + 1 / (levenshtein_distance + 1)) / 2
 
     @staticmethod
     def get_info_from_iin(iin: str) -> dict:
@@ -195,10 +181,7 @@ class QazNLTK:
         else:
             return {"status": "error", "message": "Incorrect IIN. The first digit of the IIN must be in the range [1, 6]."}
 
-        if gender_code % 2 == 1:
-            gender = "male"
-        else:
-            gender = "female"
+        gender = "male" if gender_code % 2 == 1 else "female"
 
         try:
             from datetime import datetime
@@ -206,7 +189,7 @@ class QazNLTK:
         except ValueError:
             return {"status": "error", "message": "Incorrect IIN. The date of birth is incorrect."}
 
-        info = {
+        return {
             "status": "success",
             "date_of_birth": birth_date.strftime("%d.%m.%Y"),
             "century_of_birth": f"{year // 100 + 1}",
@@ -215,8 +198,6 @@ class QazNLTK:
             "control_discharge": control_discharge
         }
 
-        return info
-    
     @classmethod
     def sentimize(cls, tokens) -> float:
         # Sentiment analysis by tokens
@@ -337,10 +318,10 @@ if __name__ == "__main__":
     # similarity_score = qnltk.calc_similarity(textA, textB)
     # print(similarity_score)
 
-    # latin_text = qnltk.convert2latin(text)
+    # latin_text = qnltk.convert2latin_iso9(text)
     # print(latin_text)
 
-    # cyrillic_text = qnltk.convert2cyrillic(text)
+    # cyrillic_text = qnltk.convert2cyrillic_iso9(text)
     # print(cyrillic_text)
 
     # sentimize_score = qnltk.sentimize(text)
@@ -349,5 +330,41 @@ if __name__ == "__main__":
     # n = int(input())
     # print(qnltk.num2word(n))
 
-    iin = input("Enter IIN: ")
-    print(qnltk.get_info_from_iin(iin))
+    # iin = input("Enter IIN: ")
+    # print(qnltk.get_info_from_iin(iin))
+
+    # Vectorizer and KNN search example:
+    documents = [
+        "Ер — елінде, гүл — жерінде.",
+        "Өз елінде көртышқан да батыр.",
+        "Өз елінің иті де қадірлі.",
+        "Отан үшін күрес — ерге тиген үлес.",
+        "Орағың өткір болса, қарың талмайды, Отаның берік болса, жауың алмайды.",
+        "Елінен безген ер болмас, Көлінен безген қаз болмас.",
+        "Сағынған елін аңсайды, Сары ала қаз көлін аңсайды.",
+        "Жат жердің қаршығасынан, Өз еліңнің қарғасы артық.",
+        "Егілмеген жер жетім, Елінен айырылған ер жетім.",
+        "Ерінен айырылған көмгенше жылайды, Елінен айырылған өлгенше жылайды.",
+        "Отан — отбасынан басталады.",
+        "Опасызда oтан жоқ.",
+        "Отан оттан да ыстық.",
+        "Отансыз адам — ормансыз бұлбұл."
+    ]
+
+    vectorizer = QazNLTKVectorizer()
+    tf_idf_matrix = vectorizer.fit_transform(documents)
+
+    knn = KNN(tf_idf_matrix)
+
+    query = "Еліміздің алтын күні жарық күн."
+
+    query_vector = vectorizer.transform([query])[0]
+
+    results = knn.search(query_vector, k=3)
+
+    for idx, distance in results:
+        print(f"Document: {documents[idx]}, Distance: {distance}")
+
+    # Document: Орағың өткір болса, қарың талмайды, Отаның берік болса, жауың алмайды., Distance: 0.6740830490255459
+    # Document: Жат жердің қаршығасынан, Өз еліңнің қарғасы артық., Distance: 0.7040525969511919
+    # Document: Өз елінде көртышқан да батыр., Distance: 0.7453452762306501

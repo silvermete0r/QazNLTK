@@ -71,7 +71,7 @@ from qaznltk import qaznltk as qnltk
 qn = qnltk.QazNLTK()
 
 text = input("Enter text: ")
-latin_text = qn.convert2latin(text)
+latin_text = qn.convert2latin_iso9(text)
 print(latin_text)
 
 # Input: Бүгін қандай керемет күн! 
@@ -84,7 +84,7 @@ from qaznltk import qaznltk as qnltk
 qn = qnltk.QazNLTK()
 
 text = input("Enter text: ")
-cyrillic_text = qn.convert2cyrillic(text)
+cyrillic_text = qn.convert2cyrillic_iso9(text)
 print(cyrillic_text)
 
 # Input: Bùgìn k̦andaj keremet kùn!
@@ -97,7 +97,7 @@ from qaznltk import qaznltk as qnltk
 qn = qnltk.QazNLTK()
 
 text = input("Enter text: ")
-sentimize_score = qnltk.sentimize(text)
+sentimize_score = qn.sentimize(text)
 print(sentimize_score)
 
 # Input: Бұл мақала өте нашар жазылған.
@@ -110,21 +110,64 @@ from qaznltk import qaznltk as qnltk
 qn = qnltk.QazNLTK()
 
 n = int(input())
-print(qnltk.num2word(n))
+print(qn.num2word(n))
 
 # Input: N = 1465
 # Output: бір мың төрт жүз алпыс бес
 ```
 
+8) Extracting information from IIN (Individual Identification Number) [`IIN: 12 digits`]:
 ``` Python
 from qaznltk import qaznltk as qnltk
 qn = qnltk.QazNLTK()
 
 iin = input("Enter IIN: ")
-print(qnltk.get_info_from_iin(iin))
+print(qn.get_info_from_iin(iin))
 
 # Input: 990408482390
 # Output: {'status': 'success', 'date_of_birth': '08.04.1999', 'century_of_birth': '20', 'gender': 'female', 'sequence_number': 8239, 'control_discharge': 0}
+```
+
+9) KNN Search on TF-IDF matrix embeddings of Kazakh language text:
+``` Python
+from qaznltk import vectorizer
+
+qn_vectorizer = vectorizer.QazNLTKVectorizer()
+tf_idf_matrix = qn_vectorizer.fit_transform(documents)
+
+knn = vectorizer.KNN(tf_idf_matrix)
+
+query = "Еліміздің алтын күні жарық күн."
+
+query_vector = qn_vectorizer.transform([query])[0]
+
+results = knn.search(query_vector, k=3)
+
+for idx, distance in results:
+    print(f"Document: {documents[idx]}, Distance: {distance}")
+
+# Input:
+# documents = [
+#     "Ер — елінде, гүл — жерінде.",
+#     "Өз елінде көртышқан да батыр.",
+#     "Өз елінің иті де қадірлі.",
+#     "Отан үшін күрес — ерге тиген үлес.",
+#     "Орағың өткір болса, қарың талмайды, Отаның берік болса, жауың алмайды.",
+#     "Елінен безген ер болмас, Көлінен безген қаз болмас.",
+#     "Сағынған елін аңсайды, Сары ала қаз көлін аңсайды.",
+#     "Жат жердің қаршығасынан, Өз еліңнің қарғасы артық.",
+#     "Егілмеген жер жетім, Елінен айырылған ер жетім.",
+#     "Ерінен айырылған көмгенше жылайды, Елінен айырылған өлгенше жылайды.",
+#     "Отан — отбасынан басталады.",
+#     "Опасызда oтан жоқ.",
+#     "Отан оттан да ыстық.",
+#     "Отансыз адам — ормансыз бұлбұл."
+# ]
+
+# Output:
+# Document: Орағың өткір болса, қарың талмайды, Отаның берік болса, жауың алмайды., Distance: 0.6740830490255459
+# Document: Жат жердің қаршығасынан, Өз еліңнің қарғасы артық., Distance: 0.7040525969511919
+# Document: Өз елінде көртышқан да батыр., Distance: 0.7453452762306501
 ```
 
 * **Test Samples:** https://vk.com/club121755042
@@ -142,7 +185,7 @@ pip install qaznltk
 
 
 ## Dependencies
-- Package was developed on built-in python functions; 
+- Package was developed on built-in python functions (pure python); 
 
 
 ## License
