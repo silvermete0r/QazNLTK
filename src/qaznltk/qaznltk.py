@@ -3,7 +3,6 @@ from typing import List
 from collections import Counter
 import urllib3
 from functools import lru_cache
-from vectorizer import QazNLTKVectorizer, KNN
 
 class QazNLTK:
     '''
@@ -351,20 +350,20 @@ if __name__ == "__main__":
         "Отансыз адам — ормансыз бұлбұл."
     ]
 
-    vectorizer = QazNLTKVectorizer()
-    tf_idf_matrix = vectorizer.fit_transform(documents)
+    # vectorizer = QazNLTKVectorizer()
+    # tf_idf_matrix = vectorizer.fit_transform(documents)
 
-    knn = KNN(tf_idf_matrix)
+    # knn = KNN(tf_idf_matrix)
 
-    query = "Еліміздің алтын күні жарық күн."
+    # query = "Еліміздің алтын күні жарық күн."
 
-    query_vector = vectorizer.transform([query])[0]
+    # query_vector = vectorizer.transform([query])[0]
 
-    results = knn.search(query_vector, k=3)
+    # results = knn.search(query_vector, k=3)
 
-    for idx, distance in results:
-        print(f"Document: {documents[idx]}, Distance: {distance}")
+    # for idx, distance in results:
+    #     print(f"Document: {documents[idx]}, Distance: {distance}")
 
-    # Document: Орағың өткір болса, қарың талмайды, Отаның берік болса, жауың алмайды., Distance: 0.6740830490255459
-    # Document: Жат жердің қаршығасынан, Өз еліңнің қарғасы артық., Distance: 0.7040525969511919
-    # Document: Өз елінде көртышқан да батыр., Distance: 0.7453452762306501
+    # # Document: Орағың өткір болса, қарың талмайды, Отаның берік болса, жауың алмайды., Distance: 0.6740830490255459
+    # # Document: Жат жердің қаршығасынан, Өз еліңнің қарғасы артық., Distance: 0.7040525969511919
+    # # Document: Өз елінде көртышқан да батыр., Distance: 0.7453452762306501
