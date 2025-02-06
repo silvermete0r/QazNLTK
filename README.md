@@ -181,7 +181,8 @@ Package Index (PyPI)](https://pypi.org/project/qaznltk).
 ```sh
 pip install qaznltk
 ```
-![image](https://github.com/silvermete0r/QazNLTK/assets/108217670/b1e8eaa1-f25f-4019-9d75-dee8d25d6a28)
+
+![image](https://github.com/user-attachments/assets/057554b7-629b-4f11-bf0f-05b6116b3716)
 
 
 ## Dependencies
