@@ -6,7 +6,7 @@
 
 # QazNLTK: a package for working with Kazakh language text processing.
 
-[![PyPI Latest Release](https://img.shields.io/pypi/v/qaznltk.svg)](https://pypi.org/project/qaznltk/) [![PyPI Downloads](https://img.shields.io/pypi/dm/qaznltk.svg?label=PyPI%20downloads)](https://pypi.org/project/qaznltk/)
+[![PyPI Latest Release](https://img.shields.io/pypi/v/qaznltk.svg)](https://pypi.org/project/qaznltk/) [![PyPI Downloads](https://img.shields.io/pypi/dm/qaznltk.svg?label=PyPI%20downloads)](https://pypi.org/project/qaznltk/) [![PyPI Downloads](https://static.pepy.tech/badge/qaznltk)](https://pepy.tech/projects/qaznltk)
 
 
 ## What is it?
