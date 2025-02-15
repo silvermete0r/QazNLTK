@@ -170,6 +170,39 @@ for idx, distance in results:
 # Document: Өз елінде көртышқан да батыр., Distance: 0.7453452762306501
 ```
 
+10) QazPerry
+
+Gemma 2: 2B QazPerry is a fine-tuned version of the Gemma 2B model, optimized for the Kazakh language. This model is part of the QazPerry initiative, which aims to develop Small Large Language Models (SLLMs) to enhance Kazakh NLP capabilities. It has been fine-tuned using the saillab/alpaca_kazakh_taco dataset with a LoRA adaptation approach to improve efficiency.
+
+```bash
+pip install keras-nlp huggingface_hub
+```
+
+```python
+from huggingface_hub import hf_hub_download
+import keras
+import keras_nlp
+
+repo_id = "silvermete0r/Gemma2_2B_QazPerry"
+filename = "Gemma2_2B_QazPerry.keras"
+
+model_path = hf_hub_download(repo_id=repo_id, filename=filename)
+
+gemma_lm = keras.models.load_model(model_path, custom_objects={"GemmaCausalLM": keras_nlp.models.GemmaCausalLM})
+
+prompt = "Instruction:\nҚазақша бірдеңе айтшы?\n\nResponse:\n"
+
+print(gemma_lm.generate(prompt))
+```
+
+* Kaggle Model: https://www.kaggle.com/models/armanzhalgasbayev/gemma2_2b_qazperry/
+* HuggingFace Model: https://huggingface.co/silvermete0r/Gemma2_2B_QazPerry
+* First Inference QazPerry:  https://www.kaggle.com/code/armanzhalgasbayev/gemma2-2b-qazperry-first-inference
+* QazPerry Fine-Tuning Notebook: https://www.kaggle.com/code/armanzhalgasbayev/kazakh-llm-based-on-gemma-2b-kz
+* QazPerry Demo Inference: https://huggingface.co/spaces/silvermete0r/Gemma_2_2B_QazPerry_Inference_Demo
+* Training Dataset: https://huggingface.co/datasets/saillab/alpaca_kazakh_taco
+
+
 * **Test Samples:** https://vk.com/club121755042
 
 ## Where to get it
