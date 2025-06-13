@@ -1,7 +1,7 @@
-from qaznltk import qaznltk as qnltk
+from qaznltk import QazNLTK
 
-qn = qnltk.QazNLTK()
+qn = QazNLTK()
 
 text = input()
 
-print(qn.convert2latin(text))
+print(qn.sent_tokenize(text))

@@ -27,8 +27,8 @@ Here are just a few of the things that qaznltk does well:
 
 1) Kazakh language Text Tokenizing by keyword frequencies:
 ``` Python
-from qaznltk import qaznltk as qnltk
-qn = qnltk.QazNLTK()
+from qaznltk import QazNLTK
+qn = QazNLTK()
 
 text = input("Enter text: ")
 tokens = qn.tokenize(text)
@@ -40,8 +40,8 @@ print(tokens)
 
 2) Kazakh language Text Segmentation into sentences:
 ``` Python
-from qaznltk import qaznltk as qnltk
-qn = qnltk.QazNLTK()
+from qaznltk import QazNLTK
+qn = QazNLTK()
 
 text = input("Enter text: ")
 sent_tokens = qn.sent_tokenize(text)
@@ -53,8 +53,8 @@ print(sent_tokens)
 
 3) Evaluate Difference score between 2 text:
 ``` Python
-from qaznltk import qaznltk as qnltk
-qn = qnltk.QazNLTK()
+from qaznltk import QazNLTK
+qn = QazNLTK()
 
 textA = input("Enter text A: ")
 textB = input("Enter text B: ")
@@ -67,8 +67,8 @@ print(similarity_score)
 
 4) Convert Kazakh language Text from Cyrillic to Latin using ISO-9 Standard:
 ``` Python
-from qaznltk import qaznltk as qnltk
-qn = qnltk.QazNLTK()
+from qaznltk import QazNLTK
+qn = QazNLTK()
 
 text = input("Enter text: ")
 latin_text = qn.convert2latin_iso9(text)
@@ -80,8 +80,8 @@ print(latin_text)
 
 5) Convert Kazakh language Text from Latin to Cyrillic using ISO-9 Standard:
 ``` Python
-from qaznltk import qaznltk as qnltk
-qn = qnltk.QazNLTK()
+from qaznltk import QazNLTK
+qn = QazNLTK()
 
 text = input("Enter text: ")
 cyrillic_text = qn.convert2cyrillic_iso9(text)
@@ -93,8 +93,8 @@ print(cyrillic_text)
 
 6) Sentiment Analysis of Kazakh language text [`negative: -1`, `neutral: 0`, `positive: 1`]:
 ``` Python
-from qaznltk import qaznltk as qnltk
-qn = qnltk.QazNLTK()
+from qaznltk import QazNLTK
+qn = QazNLTK()
 
 text = input("Enter text: ")
 sentimize_score = qn.sentimize(text)
@@ -106,8 +106,8 @@ print(sentimize_score)
 
 7) Converting any number `N` into kazakh language number words [`N <= 10^31`]:
 ``` Python
-from qaznltk import qaznltk as qnltk
-qn = qnltk.QazNLTK()
+from qaznltk import QazNLTK
+qn = QazNLTK()
 
 n = int(input())
 print(qn.num2word(n))
@@ -118,8 +118,8 @@ print(qn.num2word(n))
 
 8) Extracting information from IIN (Individual Identification Number) [`IIN: 12 digits`]:
 ``` Python
-from qaznltk import qaznltk as qnltk
-qn = qnltk.QazNLTK()
+from qaznltk import QazNLTK
+qn = QazNLTK()
 
 iin = input("Enter IIN: ")
 print(qn.get_info_from_iin(iin))
@@ -130,9 +130,9 @@ print(qn.get_info_from_iin(iin))
 
 9) KNN Search on TF-IDF matrix embeddings of Kazakh language text:
 ``` Python
-from qaznltk import vectorizer
+from qaznltk import QazNLTKVectorizer
 
-qn_vectorizer = vectorizer.QazNLTKVectorizer()
+qn_vectorizer = QazNLTKVectorizer()
 tf_idf_matrix = qn_vectorizer.fit_transform(documents)
 
 knn = vectorizer.KNN(tf_idf_matrix)
@@ -193,7 +193,7 @@ pip install qaznltk
 
 ## Getting Help
 
-📧 [supwithproject@gmail.com](https://gmail.com/)
+📧 [supwithproject@gmail.com](mailto:supwithproject@gmail.com)
 
 ## Contributing to qaznltk
 

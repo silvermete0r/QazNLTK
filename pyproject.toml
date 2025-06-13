@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "qaznltk"
-version = "1.2.4"
+version = "1.2.4.2"
 authors = [
   { name="Aibol Zhussip, Kadyr Saparbay, Tair Ussen, Tuleuov Akhan & Arman Zhalgasbayev", email="supwithproject@gmail.com" },
 ]

@@ -198,7 +198,7 @@ class QazNLTK:
         }
 
     @classmethod
-    def sentimize(cls, tokens) -> float:
+    def sentimize(cls, tokens: List[tuple]) -> float:
         # Sentiment analysis by tokens
         if type(tokens) == str:
             tokens = cls.tokenize(tokens)
@@ -220,7 +220,11 @@ class QazNLTK:
             return 0.0
     
     @staticmethod
-    def num2word(n):
+    def sent_tokenize(text: str) -> List[str]:
+        return re.split(r'(?<=[.!?]) +', text)
+
+    @staticmethod
+    def num2word(n: int) -> str:
         # Convert number to word
         w = {
             "1": "бір",
