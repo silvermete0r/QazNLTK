@@ -188,6 +188,16 @@ class QazNLTK:
         except ValueError:
             return {"status": "error", "message": "Incorrect IIN. The date of birth is incorrect."}
 
+        weights = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        total = sum(int(iin[i]) * weights[i] for i in range(11))
+        mod = total % 11
+        if mod == 10:
+            weights = [3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2]
+            total = sum(int(iin[i]) * weights[i] for i in range(11))
+            mod = total % 11
+        if mod != control_discharge:
+            return {"status": "error", "message": "Incorrect IIN. Control discharge does not match."}
+        
         return {
             "status": "success",
             "date_of_birth": birth_date.strftime("%d.%m.%Y"),
