@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Union
 from collections import Counter
 import urllib3
 from functools import lru_cache
@@ -73,8 +73,10 @@ class QazNLTK:
     
     @staticmethod
     def __preprocess_text(text: str) -> str:
-        return re.sub(r'\W+', '', text.lower())
-    
+        text = text.lower()
+        text = re.sub(r'\s+', ' ', text)       
+        return text.strip()
+     
     @staticmethod
     def __jaccard_similarity(str1: str, str2: str) -> float:
         # Calculate Jaccard similarity: https://en.wikipedia.org/wiki/Jaccard_index
@@ -86,7 +88,7 @@ class QazNLTK:
     
     @staticmethod
     @lru_cache(maxsize=None)
-    def __levenshtein_distance(s1: str, s2: str) -> int:
+    def __levenshtein_distance(s1: Union[str, list], s2: Union[str, list]) -> int:
         # Calculate Levenshtein distance: https://en.wikipedia.org/wiki/Levenshtein_distance
         if len(s1) < len(s2):
             return QazNLTK.__levenshtein_distance(s2, s1)
@@ -102,6 +104,22 @@ class QazNLTK:
                 current_row.append(min(insertions, deletions, substitutions))
             previous_row = current_row
         return previous_row[-1]
+    
+    @staticmethod
+    def calc_cer(true_text, pred_text) -> float:
+        # CER - Character Error Rate
+        true_text = QazNLTK.__preprocess_text(true_text)
+        pred_text = QazNLTK.__preprocess_text(pred_text)
+        return QazNLTK.__levenshtein_distance(true_text, pred_text) / len(true_text)
+
+    @staticmethod
+    def calc_wer(true_text, pred_text) -> float:
+        # WER - Word Error Rate
+        true_text = QazNLTK.__preprocess_text(true_text)
+        pred_text = QazNLTK.__preprocess_text(pred_text)
+        true_words = tuple(true_text.split())
+        pred_words = tuple(pred_text.split())
+        return QazNLTK.__levenshtein_distance(true_words, pred_words) / len(true_words)
 
     @staticmethod
     def load_words(words_link: str) -> List[str]:
@@ -155,7 +173,7 @@ class QazNLTK:
             return 0
         jaccard_similarity = QazNLTK.__jaccard_similarity(str1, str2) 
         levenshtein_distance = QazNLTK.__levenshtein_distance(str1, str2)
-        return (jaccard_similarity + 1 / (levenshtein_distance + 1)) / 2
+        return float((jaccard_similarity + 1 / (levenshtein_distance + 1)) / 2)
 
     @staticmethod
     def get_info_from_iin(iin: str) -> dict:
@@ -330,6 +348,12 @@ if __name__ == "__main__":
     # textB = input("Enter text B: ")
     # similarity_score = qnltk.calc_similarity(textA, textB)
     # print(similarity_score)
+
+    textA = input("Enter text A: ")
+    textB = input("Enter text B: ")
+    cer_score = qnltk.calc_cer(textA, textB)
+    wer_score = qnltk.calc_wer(textA, textB)
+    print(f'CER: {cer_score:.2f} | WER: {wer_score:.2f}')
 
     # latin_text = qnltk.convert2latin_iso9(text)
     # print(latin_text)
