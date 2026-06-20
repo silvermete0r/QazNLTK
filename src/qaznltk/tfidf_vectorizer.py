@@ -135,4 +135,3 @@ if __name__ == '__main__':
     results = knn.search(query_vector, k=3)
     for idx, distance in results:
         print(f"Document: {documents[idx]}, Distance: {distance}")
-

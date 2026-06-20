@@ -1,7 +1,3 @@
-from qaznltk import QazNLTK
+import qaznltk as qn
 
-qn = QazNLTK()
-
-text = input()
-
-print(qn.sent_tokenize(text))
+print(qn.get_kaz_alphabet())
