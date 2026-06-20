@@ -9,7 +9,7 @@ from .utils import compute_jaccard_similarity, frequency_tokens, levenshtein_dis
 
 class QazNLTK:
     def __init__(cls) -> None:
-        base = os.path.join(os.path.dirname(__file__), "..", "special_words")
+        base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "special_words")
         cls.stop_words = set(cls.load_words(f"{base}/stop_words.txt"))
         cls.positive_words = set(cls.load_words(f"{base}/positive_words.txt"))
         cls.negative_words = set(cls.load_words(f"{base}/negative_words.txt"))
