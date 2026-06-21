@@ -4,7 +4,7 @@
 
 # QazNLTK
 
-A Python library for Kazakh language text processing.
+A Python library for Kazakh language text processing, built for educational purposes with no external Python dependencies.
 
 [![PyPI](https://img.shields.io/pypi/v/qaznltk.svg)](https://pypi.org/project/qaznltk/) [![Downloads](https://img.shields.io/pypi/dm/qaznltk.svg)](https://pypi.org/project/qaznltk/)
 
@@ -16,20 +16,20 @@ pip install qaznltk
 
 ## Features
  
-| # | Feature | Method |
-|---|---------|--------|
-| 1 | Tokenization by frequency | `tokenize(text)` |
-| 2 | Sentence segmentation | `sent_tokenize(text)` |
-| 3 | Text similarity score | `calc_similarity(a, b)` |
-| 4 | Cyrillic → Latin (ISO-9) | `convert2latin_iso9(text)` |
-| 5 | Latin → Cyrillic (ISO-9) | `convert2cyrillic_iso9(text)` |
-| 6 | Sentiment analysis | `sentimize(text)` → `-1 / 0 / 1` |
-| 7 | Number to words | `num2word(n)` |
-| 8 | IIN parser | `get_info_from_iin(iin)` |
-| 9 | Stop words list | `get_stop_words()` |
-| 10 | Kazakh alphabet | `get_kaz_alphabet()` |
-| 11 | TF-IDF + KNN search | `QazNLTKVectorizer` + `KNN` |
-| 12 | Kazakh LLM (QazPerry) | via HuggingFace |
+| # | Feature | Method | Notes | 
+|---|---------|--------|-----|
+| 1 | Tokenization by frequency | `tokenize(text)` |  | 
+| 2 | Sentence segmentation | `sent_tokenize(text)` |  | 
+| 3 | Text similarity score | `calc_similarity(a, b)` | This is a heuristic way of estimating. It is better to check the semantic similarity of sentences using the cosine distance between the embeddings of the KazEmbedV5 model (or another models). Notebook: [semantic-similarity-of-2-texts-in-kazakh-using-KazEmbed-V5](https://www.kaggle.com/code/armanzhalgasbayev/semantic-similarity-of-2-texts-in-kazakh/notebook) | 
+| 4 | Cyrillic → Latin (ISO-9) | `convert2latin_iso9(text)` | | 
+| 5 | Latin → Cyrillic (ISO-9) | `convert2cyrillic_iso9(text)` | |
+| 6 | Sentiment analysis | `sentimize(text)` → `-1 / 0 / 1` | `negative: -1, neutral: 0, positive: 1` ~ heuristic approach |
+| 7 | Number to words | `num2word(n)` | Grammatical correct text representation of numbers in Kazakh up to `N <= 10^31`  | 
+| 8 | IIN parser | `get_info_from_iin(iin)` | | 
+| 9 | Stop words list | `get_stop_words()` | | 
+| 10 | Kazakh alphabet | `get_kaz_alphabet()` | | 
+| 11 | TF-IDF + KNN search | `QazNLTKVectorizer` + `KNN` | |
+| 12 | Kazakh LLM (QazPerry) | via HuggingFace | Gemma 2: 2B fine-tuned on [saillab/alpaca_kazakh_taco](https://huggingface.co/datasets/saillab/alpaca_kazakh_taco) |
 
 ---
 
